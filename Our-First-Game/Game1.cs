@@ -12,6 +12,10 @@ namespace Our_First_Game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        private Texture2D stars, shuttle, earth, alien;
+        private SpriteFont font;
+        private int score = 0;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -40,6 +44,12 @@ namespace Our_First_Game
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            alien = Content.Load<Texture2D>("Character1");
+            stars = Content.Load<Texture2D>("stars");
+            shuttle = Content.Load<Texture2D>("shuttle");
+            earth = Content.Load<Texture2D>("earth");
+            font = Content.Load<SpriteFont>("Score");
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -63,6 +73,7 @@ namespace Our_First_Game
                 Exit();
 
             // TODO: Add your update logic here
+            score++;
 
             base.Update(gameTime);
         }
@@ -75,6 +86,15 @@ namespace Our_First_Game
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            spriteBatch.Begin();
+
+            spriteBatch.Draw(stars, new Rectangle(0, 0, 800, 480), Color.White);
+            spriteBatch.Draw(earth, new Vector2(400, 240), Color.White);
+            spriteBatch.Draw(shuttle, new Vector2(450, 240), Color.White);
+            spriteBatch.Draw(alien, new Vector2(100, 240), Color.White);
+            spriteBatch.DrawString(font, "Score: " + score, new Vector2(100, 100), Color.White);
+
+            spriteBatch.End();
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
