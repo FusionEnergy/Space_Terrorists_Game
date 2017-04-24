@@ -13,6 +13,7 @@ namespace Our_First_Game
         SpriteBatch spriteBatch;
 
         private Texture2D stars, shuttle, earth, alien;
+        private MouseState mouseOldState;
         private SpriteFont font;
         private int score = 0;
 
@@ -31,6 +32,7 @@ namespace Our_First_Game
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            this.IsMouseVisible = true;
 
             base.Initialize();
         }
@@ -73,7 +75,13 @@ namespace Our_First_Game
                 Exit();
 
             // TODO: Add your update logic here
-            score++;
+            MouseState mouseNewState = Mouse.GetState();
+
+            if (mouseOldState.LeftButton == ButtonState.Released && mouseNewState.LeftButton == ButtonState.Pressed)
+            {
+                score++;
+            }
+            mouseOldState = mouseNewState;
 
             base.Update(gameTime);
         }
@@ -84,7 +92,7 @@ namespace Our_First_Game
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
 
