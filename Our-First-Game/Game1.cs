@@ -1,6 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Our_First_Game
 {
@@ -12,7 +15,8 @@ namespace Our_First_Game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private Texture2D stars, shuttle, earth, alien;
+        private Texture2D stars;
+        private SoundEffect laserSound;
         private MouseState mouseOldState;
         private SpriteFont font;
         private int score = 0;
@@ -20,6 +24,11 @@ namespace Our_First_Game
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+
+            this.Window.Title = "The Adventure of The Future: Space Terrorists";
+
+            IsFixedTimeStep = false;
+
             Content.RootDirectory = "Content";
         }
 
@@ -46,11 +55,16 @@ namespace Our_First_Game
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            alien = Content.Load<Texture2D>("Character1");
-            stars = Content.Load<Texture2D>("stars");
-            shuttle = Content.Load<Texture2D>("shuttle");
-            earth = Content.Load<Texture2D>("earth");
-            font = Content.Load<SpriteFont>("Score");
+            stars = Content.Load<Texture2D>("Pictures/stars");
+
+            Song spaceTheme = Content.Load<Song>("Sounds/Music/upbeatTheme");
+            MediaPlayer.Volume = 0.1f;
+            MediaPlayer.Play(spaceTheme);
+            MediaPlayer.IsRepeating = true;
+
+            laserSound = Content.Load<SoundEffect>("Sounds/SoundFX/laserShot");
+
+            font = Content.Load<SpriteFont>("Fonts/Score");
 
             // TODO: use this.Content to load your game content here
         }
@@ -71,8 +85,8 @@ namespace Our_First_Game
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                this.Exit();
 
             // TODO: Add your update logic here
             MouseState mouseNewState = Mouse.GetState();
@@ -80,6 +94,7 @@ namespace Our_First_Game
             if (mouseOldState.LeftButton == ButtonState.Released && mouseNewState.LeftButton == ButtonState.Pressed)
             {
                 score++;
+                laserSound.Play(0.3f, 0, 0);
             }
             mouseOldState = mouseNewState;
 
@@ -92,15 +107,17 @@ namespace Our_First_Game
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            float frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
+            string frameRateOutput = Math.Round(frameRate).ToString();
+
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
 
             spriteBatch.Draw(stars, new Rectangle(0, 0, 800, 480), Color.White);
-            spriteBatch.Draw(earth, new Vector2(400, 240), Color.White);
-            spriteBatch.Draw(shuttle, new Vector2(450, 240), Color.White);
-            spriteBatch.Draw(alien, new Vector2(100, 240), Color.White);
-            spriteBatch.DrawString(font, "Score: " + score, new Vector2(100, 100), Color.White);
+
+            spriteBatch.DrawString(font, "Score: " + score, new Vector2(50, 30), Color.White);
+            spriteBatch.DrawString(font, frameRateOutput, new Vector2(750, 0), Color.Yellow);
 
             spriteBatch.End();
             // TODO: Add your drawing code here
