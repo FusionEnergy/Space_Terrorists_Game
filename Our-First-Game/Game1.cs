@@ -15,11 +15,13 @@ namespace Our_First_Game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private Texture2D stars;
-        private SoundEffect laserSound;
-        private MouseState mouseOldState;
+        private Texture2D stars, cruiser, scorpion, rocketShot1, rocketShot2;
+        private SoundEffect rocketSound;
+        private KeyboardState keyOldState;
         private SpriteFont font;
+        private bool shot1 = false, shot2 = false;
         private int score = 0;
+        private float cruXPos = 50, cruYPos = 380, scoXPos = 700, scoYPos = 60, rocketStartX1, rocketStartY1, rocketStartX2, rocketStartY2, rocketSpeed1 = 0, rocketSpeed2 = 0;
 
         public Game1()
         {
@@ -55,6 +57,11 @@ namespace Our_First_Game
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            cruiser = Content.Load<Texture2D>("Pictures/cruiser");
+            scorpion = Content.Load<Texture2D>("Pictures/scorpion");
+            rocketShot1 = Content.Load<Texture2D>("Pictures/rocket_shot");
+            rocketShot2 = Content.Load<Texture2D>("Pictures/rocket_shot2");
+
             stars = Content.Load<Texture2D>("Pictures/stars");
 
             Song spaceTheme = Content.Load<Song>("Sounds/Music/upbeatTheme");
@@ -62,7 +69,7 @@ namespace Our_First_Game
             MediaPlayer.Play(spaceTheme);
             MediaPlayer.IsRepeating = true;
 
-            laserSound = Content.Load<SoundEffect>("Sounds/SoundFX/laserShot");
+            rocketSound = Content.Load<SoundEffect>("Sounds/SoundFX/rocket_sound");
 
             font = Content.Load<SpriteFont>("Fonts/Score");
 
@@ -89,14 +96,55 @@ namespace Our_First_Game
                 this.Exit();
 
             // TODO: Add your update logic here
-            MouseState mouseNewState = Mouse.GetState();
 
-            if (mouseOldState.LeftButton == ButtonState.Released && mouseNewState.LeftButton == ButtonState.Pressed)
+            KeyboardState keyNewState = Keyboard.GetState();
+
+            if (keyNewState.IsKeyDown(Keys.W))
             {
-                score++;
-                laserSound.Play(0.3f, 0, 0);
+                cruYPos -= 3;
             }
-            mouseOldState = mouseNewState;
+            if (keyNewState.IsKeyDown(Keys.S))
+            {
+                cruYPos += 3;
+            }
+            if (keyNewState.IsKeyDown(Keys.D))
+            {
+                cruXPos += 2.3f;
+            }
+            if (keyNewState.IsKeyDown(Keys.A))
+            {
+                cruXPos -= 1.8f;
+            }
+            if (keyNewState.IsKeyDown(Keys.F)) // if (keyOldState.IsKeyUp(Keys.F) && keyNewState.IsKeyDown(Keys.F))
+            {//thinking of creating a function for this rocket shot, maybe in another class even
+                shot1 = true;
+                rocketStartX1 = cruXPos + 19; //don't know why rocket doesn't start shooting at cruiser sprite
+                rocketStartY1 = cruYPos + 26;
+            }
+            if (rocketStartX1 + rocketSpeed1 >= 800)
+            {
+                shot1 = false;
+            }
+            rocketSpeed1 += 6;
+
+            if (keyNewState.IsKeyDown(Keys.Up))
+            {
+                scoYPos -= 3;
+            }
+            if (keyNewState.IsKeyDown(Keys.Down))
+            {
+                scoYPos += 3;
+            }
+            if (keyNewState.IsKeyDown(Keys.Left))
+            {
+                scoXPos -= 2.3f;
+            }
+            if (keyNewState.IsKeyDown(Keys.Right))
+            {
+                scoXPos += 1.8f;
+            }
+
+            keyOldState = keyNewState;
 
             base.Update(gameTime);
         }
@@ -115,6 +163,14 @@ namespace Our_First_Game
             spriteBatch.Begin();
 
             spriteBatch.Draw(stars, new Rectangle(0, 0, 800, 480), Color.White);
+
+            spriteBatch.Draw(cruiser, new Vector2(cruXPos, cruYPos), Color.White);
+            spriteBatch.Draw(scorpion, new Vector2(scoXPos, scoYPos), Color.White);
+
+            if (shot1 == true)
+            {
+                spriteBatch.Draw(rocketShot1, new Vector2(rocketStartX1 + rocketSpeed1, rocketStartY1), Color.White);
+            }
 
             spriteBatch.DrawString(font, "Score: " + score, new Vector2(50, 30), Color.White);
             spriteBatch.DrawString(font, frameRateOutput, new Vector2(750, 0), Color.Yellow);
