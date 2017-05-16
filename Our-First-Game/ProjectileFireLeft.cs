@@ -3,13 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Our_First_Game
 {
-    class ProjectileFireRight
+    class ProjectileFireLeft
     {
         private Texture2D rocketShot;
-        public static Rectangle rocketbox1;
+        public static Rectangle rocketBox2;
         private float rocketStartX, rocketStartY, rocketSpeed;
 
-        public ProjectileFireRight(Texture2D projectile, float startX, float startY)
+        public ProjectileFireLeft(Texture2D projectile, float startX, float startY)
         {
             rocketShot = projectile;
             rocketStartX = startX;
@@ -19,9 +19,9 @@ namespace Our_First_Game
         private bool rocketEnd()
         {
             rocketSpeed += 15;
-            if (rocketStartX + rocketSpeed >= 800)
+            if (rocketStartX - rocketSpeed <= -10)
             {
-                Game1.shot1 = false;
+                Game1.shot2 = false;
                 return false;
             }
             return true;
@@ -31,8 +31,8 @@ namespace Our_First_Game
         {
             if (rocketEnd())
             {
-                spriteBatch.Draw(rocketShot, new Vector2(rocketStartX + rocketSpeed, rocketStartY), Color.White);
-                rocketbox1 = new Rectangle((int) (rocketStartX + rocketSpeed), (int)rocketStartY, rocketShot.Width, rocketShot.Height);
+                spriteBatch.Draw(rocketShot, new Vector2(rocketStartX - rocketSpeed, rocketStartY), Color.White);
+                rocketBox2 = new Rectangle((int)(rocketStartX - rocketSpeed), (int)rocketStartY, rocketShot.Width, rocketShot.Height);
             }
         }
     }

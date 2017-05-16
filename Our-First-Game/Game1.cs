@@ -12,14 +12,17 @@ namespace Our_First_Game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private Texture2D stars, cruiser, scorpion, rocketShot1, rocketShot2;
+        private Texture2D space, cruiser, scorpion, rocketShot1, rocketShot2;
+        private Rectangle cruRect, scoRect;
         private ProjectileFireRight cruFireRight;
+        private ProjectileFireLeft scoFireLeft;
         private SoundEffect rocketSound;
         private KeyboardState keyOldState;
-        private SpriteFont font;
-        private int score = 0;
-        private float cruXPos = 50, cruYPos = 380, scoXPos = 700, scoYPos = 60;
-        public static bool shot1 = false;
+        private SpriteFont font, tuganoFont;
+        private int score1 = 0, score2 = 0;
+        private float cruXPos = 50, cruYPos = 380, scoXPos = 700, scoYPos = 60, reload1 = 0, reload2 = 0;
+        private bool cruGracePeriod = true, scoGracePeriod = true;
+        public static bool shot1 = false, shot2 = false;
 
         public Game1()
         {
@@ -46,7 +49,7 @@ namespace Our_First_Game
             rocketShot1 = Content.Load<Texture2D>("Pictures/rocket_shot");
             rocketShot2 = Content.Load<Texture2D>("Pictures/rocket_shot2");
 
-            stars = Content.Load<Texture2D>("Pictures/stars");
+            space = Content.Load<Texture2D>("Pictures/Backgrounds/space");
 
             Song spaceTheme = Content.Load<Song>("Sounds/Music/upbeatTheme");
             MediaPlayer.Volume = 0.1f;
@@ -56,6 +59,7 @@ namespace Our_First_Game
             rocketSound = Content.Load<SoundEffect>("Sounds/SoundFX/rocket_sound");
 
             font = Content.Load<SpriteFont>("Fonts/Score");
+            tuganoFont = Content.Load<SpriteFont>("Fonts/TuganoFont");
         }
 
         protected override void UnloadContent()
@@ -67,6 +71,28 @@ namespace Our_First_Game
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
+
+            Console.WriteLine("$");
+
+            reload1 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            reload2 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            cruRect = new Rectangle((int)cruXPos, (int)cruYPos, cruiser.Width, cruiser.Height);
+            scoRect = new Rectangle((int)scoXPos, (int)scoYPos, scorpion.Width, scorpion.Height);
+
+            if (ProjectileFireRight.rocketbox1.Intersects(scoRect) && !scoGracePeriod)
+            {
+                score1++;
+                scoGracePeriod = true;
+                Console.WriteLine("$: rocket hit! BLUE");
+            }
+
+            if (ProjectileFireLeft.rocketBox2.Intersects(cruRect) && !cruGracePeriod)
+            {
+                score2++;
+                cruGracePeriod = true;
+                Console.WriteLine("$: rocket hit! RED");
+            }
 
             KeyboardState keyNewState = Keyboard.GetState();
 
@@ -86,28 +112,38 @@ namespace Our_First_Game
             {
                 cruXPos -= 1.8f;
             }
-            if (keyOldState.IsKeyUp(Keys.F) && keyNewState.IsKeyDown(Keys.F))
+            if (keyOldState.IsKeyUp(Keys.Q) && keyNewState.IsKeyDown(Keys.Q) && reload1 >= 1200)
             {
                 shot1 = true;
                 cruFireRight = new ProjectileFireRight(rocketShot1, cruXPos + 19, cruYPos + 26);
+                reload1 = 0;
+                scoGracePeriod = false;
                 rocketSound.Play(0.1f, 0, 0);
             }
 
-            if (keyNewState.IsKeyDown(Keys.Up))
+            if (keyNewState.IsKeyDown(Keys.I))
             {
                 scoYPos -= 3;
             }
-            if (keyNewState.IsKeyDown(Keys.Down))
+            if (keyNewState.IsKeyDown(Keys.K))
             {
                 scoYPos += 3;
             }
-            if (keyNewState.IsKeyDown(Keys.Left))
+            if (keyNewState.IsKeyDown(Keys.J))
             {
                 scoXPos -= 2.3f;
             }
-            if (keyNewState.IsKeyDown(Keys.Right))
+            if (keyNewState.IsKeyDown(Keys.L))
             {
                 scoXPos += 1.8f;
+            }
+            if (keyOldState.IsKeyUp(Keys.U) && keyNewState.IsKeyDown(Keys.U) && reload2 >= 1200)
+            {
+                shot2 = true;
+                scoFireLeft = new ProjectileFireLeft(rocketShot2, scoXPos - 19, scoYPos + 26);
+                reload2 = 0;
+                cruGracePeriod = false;
+                rocketSound.Play(0.1f, 0, 0);
             }
 
             keyOldState = keyNewState;
@@ -124,7 +160,7 @@ namespace Our_First_Game
 
             spriteBatch.Begin();
 
-            spriteBatch.Draw(stars, new Rectangle(0, 0, 800, 480), Color.White);
+            spriteBatch.Draw(space, new Rectangle(0, 0, 800, 480), Color.White);
 
             spriteBatch.Draw(cruiser, new Vector2(cruXPos, cruYPos), Color.White);
             spriteBatch.Draw(scorpion, new Vector2(scoXPos, scoYPos), Color.White);
@@ -134,8 +170,24 @@ namespace Our_First_Game
                 cruFireRight.Draw(spriteBatch);
             }
 
-            spriteBatch.DrawString(font, "Score: " + score, new Vector2(50, 30), Color.White);
+            if (shot2 == true)
+            {
+                scoFireLeft.Draw(spriteBatch);
+            }
+
             spriteBatch.DrawString(font, frameRateOutput, new Vector2(750, 0), Color.Yellow);
+            spriteBatch.DrawString(font, ":", new Vector2(400, 27), Color.White);
+            string tempScore1 = Convert.ToString(score1), tempScore2 = Convert.ToString(score2);
+            spriteBatch.DrawString(font, tempScore1, new Vector2(375, 27), Color.Blue);
+            spriteBatch.DrawString(font, tempScore2, new Vector2(425, 27), Color.Red);
+            if (reload1 < 1200)
+            {
+                spriteBatch.DrawString(tuganoFont, "Reloading...", new Vector2(105, 32), Color.Blue);
+            }
+            if (reload2 < 1200)
+            {
+                spriteBatch.DrawString(tuganoFont, "Reloading...", new Vector2(615, 32), Color.Red);
+            }
 
             spriteBatch.End();
 
