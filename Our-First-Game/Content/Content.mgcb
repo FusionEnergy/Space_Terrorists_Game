@@ -157,3 +157,21 @@
 /processorParam:TextureFormat=Color
 /build:Pictures/Backgrounds/cosmos.jpg
 
+#begin Pictures/Animations/explosion.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Pictures/Animations/explosion.png
+
+#begin Sounds/SoundFX/atari_death_sound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/SoundFX/atari_death_sound.wav
+

@@ -18,8 +18,16 @@ namespace Our_First_Game
 
         private bool rocketEnd()
         {
-            rocketSpeed += 15;
-            if (rocketStartX - rocketSpeed <= -10)
+            if (Game1.isGameActive)
+            {
+                rocketSpeed += 15;
+            }
+            else
+            {
+                rocketSpeed += 0;
+            }
+
+            if (rocketStartX - rocketSpeed <= 0 - rocketShot.Width || !Game1.isCruAlive)
             {
                 Game1.shot2 = false;
                 return false;
@@ -33,6 +41,10 @@ namespace Our_First_Game
             {
                 spriteBatch.Draw(rocketShot, new Vector2(rocketStartX - rocketSpeed, rocketStartY), Color.White);
                 rocketBox2 = new Rectangle((int)(rocketStartX - rocketSpeed), (int)rocketStartY, rocketShot.Width, rocketShot.Height);
+            }
+            else
+            {
+                rocketBox2 = new Rectangle();
             }
         }
     }
