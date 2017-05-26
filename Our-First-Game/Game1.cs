@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,56 +12,20 @@ namespace Our_First_Game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private Texture2D space, cruiser, scorpion, rocketShot1, rocketShot2, explosion, borderPixel;
+        private Texture2D space, cruiser, scorpion, rocketShot1, rocketShot2, explosion, borderPixel, blueWinScreen, redWinScreen;
         private Rectangle cruRect, scoRect;
         private AnimatedSprite animatedExplosion;
         private ProjectileFireRight cruFireRight;
         private ProjectileFireLeft scoFireLeft;
         private SoundEffect rocketSound, explosionSound;
+        private Song boss, map, Mars, Mercury, Venus;
+        private Song[] songList;
         private KeyboardState keyOldState;
         private SpriteFont font, tuganoFont;
-        private int score1 = 0, score2 = 0;
-        private float cruXPos = 50, cruYPos = 380, scoXPos = 700, scoYPos = 80, reload1 = 0, reload2 = 0;
-        private bool cruGracePeriod = true, scoGracePeriod = true;
-        public static bool shot1 = false, shot2 = false, isCruAlive = true, isScoAlive = true, isGameActive = true;
-
-        async void roundOver(int winner)
-        {
-            isGameActive = false;
-            await Task.Delay(530);
-
-            if (winner == 0)
-            {
-                score1++;
-            }
-            else
-            {
-                score2++;
-            }
-
-            await Task.Delay(100);
-
-            if (score1 == 10)
-            {
-                //doing later
-                Console.WriteLine("Blue wins!\nThis game is unfinished and more cooler ending screens will be added. :)\nHit enter in the console to learn more about future features.");
-                Console.ReadKey();
-                Console.WriteLine("Will be adding more maps, more sound tracks; afterwards, game will be complete. :D");
-            }
-            if (score2 == 10)
-            {
-                //doing later
-                Console.WriteLine("Red wins!\nThis game is unfinished and more cooler ending screens will be added. :)\nHit enter in the console to learn more about future features.");
-                Console.ReadKey();
-                Console.WriteLine("Will be adding more maps, more sound tracks; afterwards, game will be complete. :D");
-            }
-            else
-            {
-                cruXPos = 50; cruYPos = 380; scoXPos = 700; scoYPos = 80; reload1 = 0; reload2 = 0;
-                isCruAlive = true; isScoAlive = true; shot1 = false; shot2 = false;
-                isGameActive = true;
-            }
-        }
+        private RoundOver roundOver;
+        public static int score1 = 0, score2 = 0;
+        public static float cruXPos = 50, cruYPos = 380, scoXPos = 700, scoYPos = 80, reload1 = 0, reload2 = 0;
+        public static bool shot1 = false, shot2 = false, isCruAlive = true, isScoAlive = true, isGameActive = true, cruGracePeriod = true, scoGracePeriod = true;
 
         public Game1()
         {
@@ -97,10 +60,16 @@ namespace Our_First_Game
 
             space = Content.Load<Texture2D>("Pictures/Backgrounds/space");
 
-            Song spaceTheme = Content.Load<Song>("Sounds/Music/upbeatTheme");
+            blueWinScreen = Content.Load<Texture2D>("Pictures/WinnerScreens/BlueWins");
+            redWinScreen = Content.Load<Texture2D>("Pictures/WinnerScreens/RedWins");
+
+            boss = Content.Load<Song>("Sounds/Music/boss");
+            map = Content.Load<Song>("Sounds/Music/map");
+            Mars = Content.Load<Song>("Sounds/Music/mars");
+            Mercury = Content.Load<Song>("Sounds/Music/mercury");
+            Venus = Content.Load<Song>("Sounds/Music/venus");
+            songList = new Song[] { boss, map, Mars, Mercury, Venus };
             MediaPlayer.Volume = 0.1f;
-            MediaPlayer.Play(spaceTheme);
-            MediaPlayer.IsRepeating = true;
 
             rocketSound = Content.Load<SoundEffect>("Sounds/SoundFX/rocket_sound");
             explosionSound = Content.Load<SoundEffect>("Sounds/SoundFX/atari_death_sound");
@@ -125,12 +94,15 @@ namespace Our_First_Game
             cruRect = new Rectangle((int)cruXPos, (int)cruYPos, cruiser.Width, cruiser.Height);
             scoRect = new Rectangle((int)scoXPos, (int)scoYPos, scorpion.Width, scorpion.Height);
 
+            Random randSongListNumber = new Random();
+
             if (ProjectileFireRight.rocketbox1.Intersects(scoRect) && !scoGracePeriod)
             {
                 scoGracePeriod = true;
                 isScoAlive = false;
-                roundOver(0);
                 explosionSound.Play(0.4f, 0, 0.08f);
+                roundOver = new RoundOver();
+                roundOver.awardPoints(0);
                 Console.WriteLine(gameTime.TotalGameTime.TotalSeconds + ": rocket hit! BLUE");
             }
 
@@ -138,8 +110,9 @@ namespace Our_First_Game
             {
                 cruGracePeriod = true;
                 isCruAlive = false;
-                roundOver(1);
                 explosionSound.Play(0.4f, 0, -0.08f);
+                roundOver = new RoundOver();
+                roundOver.awardPoints(1);
                 Console.WriteLine(gameTime.TotalGameTime.TotalSeconds + ": rocket hit! RED");
             }
 
@@ -205,8 +178,12 @@ namespace Our_First_Game
 
             keyOldState = keyNewState;
 
-            if (isGameActive)
-                base.Update(gameTime);
+            if (MediaPlayer.State != MediaState.Playing && MediaPlayer.PlayPosition.TotalSeconds == 0.0f)
+            {
+                MediaPlayer.Play(songList[randSongListNumber.Next(songList.Length -1)]);
+            }
+
+            base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -264,10 +241,19 @@ namespace Our_First_Game
                 spriteBatch.DrawString(tuganoFont, reload, new Vector2(745 - tuganoFont.MeasureString(reload).X, 32), Color.Red);
             }
 
+            if (score1 == 8)
+            {
+                roundOver.gameOver(spriteBatch, blueWinScreen);
+            }
+
+            if (score2 == 8)
+            {
+                roundOver.gameOver(spriteBatch, redWinScreen);
+            }
+
             spriteBatch.End();
 
-            if (isGameActive)
-                base.Draw(gameTime);
+            base.Draw(gameTime);
         }
     }
 }
