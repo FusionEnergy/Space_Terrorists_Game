@@ -30,6 +30,8 @@ namespace Our_First_Game
             if (rocketStartX + rocketSpeed >= 800 || !Game1.isScoAlive)
             {
                 Game1.shot1 = false;
+                rocketbox1 = new Rectangle();
+                Game1.rocketSoundInstanceRight.Stop();
                 return false;
             }
             return true;
@@ -41,10 +43,6 @@ namespace Our_First_Game
             {
                 spriteBatch.Draw(rocketShot, new Vector2(rocketStartX + rocketSpeed, rocketStartY), Color.White);
                 rocketbox1 = new Rectangle((int) (rocketStartX + rocketSpeed), (int)rocketStartY, rocketShot.Width, rocketShot.Height);
-            }
-            else
-            {
-                rocketbox1 = new Rectangle();
             }
         }
     }

@@ -17,13 +17,15 @@ namespace Our_First_Game
         private AnimatedSprite animatedExplosion;
         private ProjectileFireRight cruFireRight;
         private ProjectileFireLeft scoFireLeft;
-        private SoundEffect rocketSound, explosionSound;
-        private Song boss, map, Mars, Mercury, Venus;
-        private Song[] songList;
         private KeyboardState keyOldState;
         private SpriteFont font, tuganoFont;
         private RoundOver roundOver;
+        private static Song boss, map, Mars, Mercury, Venus;
+        private static Song[] songList;
+        private static SoundEffect rocketSound, explosionSound, winScreenSound;
+        public static SoundEffectInstance rocketSoundInstanceLeft, rocketSoundInstanceRight, explosionSoundInstance, winScreenSoundInstance;
         public static int score1 = 0, score2 = 0;
+        public const int scoreMax = 1; //should be 8 for final game, but this is just for debugging
         public static float cruXPos = 50, cruYPos = 380, scoXPos = 700, scoYPos = 80, reload1 = 0, reload2 = 0;
         public static bool shot1 = false, shot2 = false, isCruAlive = true, isScoAlive = true, isGameActive = true, cruGracePeriod = true, scoGracePeriod = true;
 
@@ -72,7 +74,16 @@ namespace Our_First_Game
             MediaPlayer.Volume = 0.1f;
 
             rocketSound = Content.Load<SoundEffect>("Sounds/SoundFX/rocket_sound");
+            rocketSoundInstanceLeft = rocketSound.CreateInstance();
+            rocketSoundInstanceRight = rocketSound.CreateInstance();
+            rocketSoundInstanceLeft.Volume = 0.1f;
+            rocketSoundInstanceRight.Volume = 0.1f;
             explosionSound = Content.Load<SoundEffect>("Sounds/SoundFX/atari_death_sound");
+            explosionSoundInstance = explosionSound.CreateInstance();
+            explosionSoundInstance.Volume = 0.4f;
+            winScreenSound = Content.Load<SoundEffect>("Sounds/SoundFX/win_screen_sound");
+            winScreenSoundInstance = winScreenSound.CreateInstance();
+            winScreenSoundInstance.Volume = 0.45f;
 
             font = Content.Load<SpriteFont>("Fonts/Score");
             tuganoFont = Content.Load<SpriteFont>("Fonts/TuganoFont");
@@ -100,7 +111,8 @@ namespace Our_First_Game
             {
                 scoGracePeriod = true;
                 isScoAlive = false;
-                explosionSound.Play(0.4f, 0, 0.08f);
+                explosionSoundInstance.Pan = 0.08f;
+                explosionSoundInstance.Play();
                 roundOver = new RoundOver();
                 roundOver.awardPoints(0);
                 Console.WriteLine(gameTime.TotalGameTime.TotalSeconds + ": rocket hit! BLUE");
@@ -110,7 +122,8 @@ namespace Our_First_Game
             {
                 cruGracePeriod = true;
                 isCruAlive = false;
-                explosionSound.Play(0.4f, 0, -0.08f);
+                explosionSoundInstance.Pan = -0.08f;
+                explosionSoundInstance.Play();
                 roundOver = new RoundOver();
                 roundOver.awardPoints(1);
                 Console.WriteLine(gameTime.TotalGameTime.TotalSeconds + ": rocket hit! RED");
@@ -144,7 +157,7 @@ namespace Our_First_Game
                 cruFireRight = new ProjectileFireRight(rocketShot1, cruXPos + 19, cruYPos + 26);
                 reload1 = 0;
                 scoGracePeriod = false;
-                rocketSound.Play(0.1f, 0, 0);
+                rocketSoundInstanceRight.Play();
             }
 
             if (keyNewState.IsKeyDown(Keys.I) && isScoAlive && isGameActive)
@@ -173,7 +186,7 @@ namespace Our_First_Game
                 scoFireLeft = new ProjectileFireLeft(rocketShot2, scoXPos - 19, scoYPos + 26);
                 reload2 = 0;
                 cruGracePeriod = false;
-                rocketSound.Play(0.1f, 0, 0);
+                rocketSoundInstanceLeft.Play();
             }
 
             keyOldState = keyNewState;
@@ -241,14 +254,14 @@ namespace Our_First_Game
                 spriteBatch.DrawString(tuganoFont, reload, new Vector2(745 - tuganoFont.MeasureString(reload).X, 32), Color.Red);
             }
 
-            if (score1 == 8)
+            if (score1 == scoreMax)
             {
-                roundOver.gameOver(spriteBatch, blueWinScreen);
+                roundOver.gameOver(spriteBatch, 0, blueWinScreen);
             }
 
-            if (score2 == 8)
+            if (score2 == scoreMax)
             {
-                roundOver.gameOver(spriteBatch, redWinScreen);
+                roundOver.gameOver(spriteBatch, 1, redWinScreen);
             }
 
             spriteBatch.End();

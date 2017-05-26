@@ -79,42 +79,6 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/TuganoFont.spritefont
 
-#begin Pictures/Backgrounds/nebula.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Pictures/Backgrounds/nebula.jpg
-
-#begin Pictures/Backgrounds/planets.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Pictures/Backgrounds/planets.jpg
-
-#begin Pictures/Backgrounds/purple_planet.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Pictures/Backgrounds/purple_planet.jpg
-
 #begin Pictures/Backgrounds/space.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -126,30 +90,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Pictures/Backgrounds/space.jpg
-
-#begin Pictures/Backgrounds/stars.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Pictures/Backgrounds/stars.jpg
-
-#begin Pictures/Backgrounds/cosmos.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Pictures/Backgrounds/cosmos.jpg
 
 #begin Pictures/Animations/explosion.png
 /importer:TextureImporter
@@ -222,4 +162,10 @@
 /processor:SongProcessor
 /processorParam:Quality=Best
 /build:Sounds/Music/venus.mp3
+
+#begin Sounds/SoundFX/win_screen_sound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/SoundFX/win_screen_sound.wav
 
