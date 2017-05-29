@@ -12,7 +12,9 @@ namespace Our_First_Game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private Texture2D space, cruiser, scorpion, rocketShot1, rocketShot2, explosion, borderPixel, blueWinScreen, redWinScreen;
+        private Texture2D cruiser, scorpion, rocketShot1, rocketShot2, explosion, borderPixel, blackTranslucentPixel, blueWinScreen, redWinScreen, space, blueRed, galaxy, nebula, pink, purple;
+        private Texture2D[] backgroundList;
+        public static DrawBackground drawBackground;
         private Rectangle cruRect, scoRect;
         private AnimatedSprite animatedExplosion;
         private ProjectileFireRight cruFireRight;
@@ -51,6 +53,8 @@ namespace Our_First_Game
 
             borderPixel = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             borderPixel.SetData(new[] { Color.White });
+            blackTranslucentPixel = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            blackTranslucentPixel.SetData(new[] { Color.Black * 0.9f });
 
             cruiser = Content.Load<Texture2D>("Pictures/cruiser");
             scorpion = Content.Load<Texture2D>("Pictures/scorpion");
@@ -61,6 +65,13 @@ namespace Our_First_Game
             animatedExplosion = new AnimatedSprite(explosion, 4, 4);
 
             space = Content.Load<Texture2D>("Pictures/Backgrounds/space");
+            blueRed = Content.Load<Texture2D>("Pictures/Backgrounds/blue&red");
+            galaxy = Content.Load<Texture2D>("Pictures/Backgrounds/galaxy");
+            nebula = Content.Load<Texture2D>("Pictures/Backgrounds/nebula");
+            pink = Content.Load<Texture2D>("Pictures/Backgrounds/pink");
+            purple = Content.Load<Texture2D>("Pictures/Backgrounds/purple");
+            backgroundList = new Texture2D[] { space, blueRed, galaxy, nebula, pink, purple };
+            drawBackground = new DrawBackground(backgroundList);
 
             blueWinScreen = Content.Load<Texture2D>("Pictures/WinnerScreens/BlueWins");
             redWinScreen = Content.Load<Texture2D>("Pictures/WinnerScreens/RedWins");
@@ -193,7 +204,7 @@ namespace Our_First_Game
 
             if (MediaPlayer.State != MediaState.Playing && MediaPlayer.PlayPosition.TotalSeconds == 0.0f)
             {
-                MediaPlayer.Play(songList[randSongListNumber.Next(songList.Length -1)]);
+                MediaPlayer.Play(songList[randSongListNumber.Next(songList.Length - 1)]);
             }
 
             base.Update(gameTime);
@@ -210,7 +221,9 @@ namespace Our_First_Game
 
             spriteBatch.Begin();
 
-            spriteBatch.Draw(space, new Rectangle(0, 0, 800, 480), Color.White);
+            drawBackground.Draw(spriteBatch);
+
+            spriteBatch.Draw(blackTranslucentPixel, new Rectangle(0, 0, 800, 68), Color.White);
 
             spriteBatch.Draw(borderPixel, new Rectangle(0, 68, 800, 3), Color.White);
             spriteBatch.Draw(borderPixel, new Rectangle(400, 68, 3, 412), Color.White);

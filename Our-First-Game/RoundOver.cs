@@ -33,6 +33,7 @@ namespace Our_First_Game
                 Game1.cruXPos = 50; Game1.cruYPos = 380; Game1.scoXPos = 700; Game1.scoYPos = 80; Game1.reload1 = 0; Game1.reload2 = 0;
                 Game1.isCruAlive = true; Game1.isScoAlive = true; Game1.shot1 = false; Game1.shot2 = false; Game1.cruGracePeriod = true; Game1.scoGracePeriod = true;
                 Game1.isGameActive = true;
+                Game1.drawBackground.GetRandom();
             }
 
             await Task.Delay(55);
@@ -68,6 +69,7 @@ namespace Our_First_Game
                 Game1.isCruAlive = true; Game1.isScoAlive = true; Game1.shot1 = false; Game1.shot2 = false; Game1.cruGracePeriod = true; Game1.scoGracePeriod = true;
                 Game1.isGameActive = true;
                 Game1.score1 = 0; Game1.score2 = 0;
+                Game1.drawBackground.GetRandom();
                 Game1.winScreenSoundInstance.Stop();
             }
         }
