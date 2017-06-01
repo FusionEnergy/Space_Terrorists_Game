@@ -79,18 +79,6 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/TuganoFont.spritefont
 
-#begin Pictures/Backgrounds/space.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Pictures/Backgrounds/space.jpg
-
 #begin Pictures/Animations/explosion.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -108,30 +96,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/SoundFX/atari_death_sound.wav
-
-#begin Pictures/WinnerScreens/BlueWins.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Pictures/WinnerScreens/BlueWins.png
-
-#begin Pictures/WinnerScreens/RedWins.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Pictures/WinnerScreens/RedWins.png
 
 #begin Sounds/Music/mars.mp3
 /importer:Mp3Importer
@@ -228,4 +192,52 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Pictures/Backgrounds/pink.jpg
+
+#begin Pictures/Screens/BlueWins.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Pictures/Screens/BlueWins.png
+
+#begin Pictures/Screens/RedWins.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Pictures/Screens/RedWins.png
+
+#begin Pictures/Screens/HowToPlayScreen.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Pictures/Screens/HowToPlayScreen.png
+
+#begin Pictures/Screens/SplashScreen.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Pictures/Screens/SplashScreen.png
 

@@ -12,19 +12,21 @@ namespace Our_First_Game
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private Texture2D cruiser, scorpion, rocketShot1, rocketShot2, explosion, borderPixel, blackTranslucentPixel, blueWinScreen, redWinScreen, space, blueRed, galaxy, nebula, pink, purple;
+        private Texture2D cruiser, scorpion, rocketShot1, rocketShot2, explosion, borderPixel, blackTranslucentPixel, blueWinScreen, redWinScreen, splashScreen, howToPlayScreen, blueRed, galaxy, nebula, pink, purple;
         private Texture2D[] backgroundList;
         public static DrawBackground drawBackground;
+        private SplashScreen splash;
         private Rectangle cruRect, scoRect;
         private AnimatedSprite animatedExplosion;
         private ProjectileFireRight cruFireRight;
         private ProjectileFireLeft scoFireLeft;
-        private KeyboardState keyOldState;
         private SpriteFont font, tuganoFont;
         private RoundOver roundOver;
+        private static KeyboardState keyOldState, keyNewState;
         private static Song boss, map, Mars, Mercury, Venus;
         private static Song[] songList;
         private static SoundEffect rocketSound, explosionSound, winScreenSound;
+        public static HowToPlayMenu displayMenu;
         public static SoundEffectInstance rocketSoundInstanceLeft, rocketSoundInstanceRight, explosionSoundInstance, winScreenSoundInstance;
         public static int score1 = 0, score2 = 0;
         public const int scoreMax = 1; //should be 8 for final game, but this is just for debugging
@@ -64,17 +66,20 @@ namespace Our_First_Game
             explosion = Content.Load<Texture2D>("Pictures/Animations/explosion");
             animatedExplosion = new AnimatedSprite(explosion, 4, 4);
 
-            space = Content.Load<Texture2D>("Pictures/Backgrounds/space");
             blueRed = Content.Load<Texture2D>("Pictures/Backgrounds/blue&red");
             galaxy = Content.Load<Texture2D>("Pictures/Backgrounds/galaxy");
             nebula = Content.Load<Texture2D>("Pictures/Backgrounds/nebula");
             pink = Content.Load<Texture2D>("Pictures/Backgrounds/pink");
             purple = Content.Load<Texture2D>("Pictures/Backgrounds/purple");
-            backgroundList = new Texture2D[] { space, blueRed, galaxy, nebula, pink, purple };
+            backgroundList = new Texture2D[] { blueRed, galaxy, nebula, pink, purple };
             drawBackground = new DrawBackground(backgroundList);
 
-            blueWinScreen = Content.Load<Texture2D>("Pictures/WinnerScreens/BlueWins");
-            redWinScreen = Content.Load<Texture2D>("Pictures/WinnerScreens/RedWins");
+            splashScreen = Content.Load<Texture2D>("Pictures/Screens/SplashScreen");
+            splash = new SplashScreen(splashScreen);
+            howToPlayScreen = Content.Load<Texture2D>("Pictures/Screens/HowToPlayScreen");
+            displayMenu = new HowToPlayMenu(howToPlayScreen);
+            blueWinScreen = Content.Load<Texture2D>("Pictures/Screens/BlueWins");
+            redWinScreen = Content.Load<Texture2D>("Pictures/Screens/RedWins");
 
             boss = Content.Load<Song>("Sounds/Music/boss");
             map = Content.Load<Song>("Sounds/Music/map");
@@ -140,7 +145,7 @@ namespace Our_First_Game
                 Console.WriteLine(gameTime.TotalGameTime.TotalSeconds + ": rocket hit! RED");
             }
 
-            KeyboardState keyNewState = Keyboard.GetState();
+            keyNewState = Keyboard.GetState();
 
             if (keyNewState.IsKeyDown(Keys.W) && isCruAlive && isGameActive)
             {
@@ -206,6 +211,9 @@ namespace Our_First_Game
             {
                 MediaPlayer.Play(songList[randSongListNumber.Next(songList.Length - 1)]);
             }
+
+            splash.Update();
+            displayMenu.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -276,6 +284,9 @@ namespace Our_First_Game
             {
                 roundOver.gameOver(spriteBatch, 1, redWinScreen);
             }
+
+            splash.Draw(spriteBatch);
+            displayMenu.Draw(spriteBatch);
 
             spriteBatch.End();
 
