@@ -29,7 +29,7 @@ namespace Our_First_Game
         public static HowToPlayMenu displayMenu;
         public static SoundEffectInstance rocketSoundInstanceLeft, rocketSoundInstanceRight, explosionSoundInstance, winScreenSoundInstance;
         public static int score1 = 0, score2 = 0;
-        public const int scoreMax = 1; //should be 8 for final game, but this is just for debugging
+        public const int scoreMax = 5; //can change for debugging purposes
         public static float cruXPos = 50, cruYPos = 380, scoXPos = 700, scoYPos = 80, reload1 = 0, reload2 = 0;
         public static bool shot1 = false, shot2 = false, isCruAlive = true, isScoAlive = true, isGameActive = true, cruGracePeriod = true, scoGracePeriod = true;
 
@@ -38,7 +38,7 @@ namespace Our_First_Game
             graphics = new GraphicsDeviceManager(this);
             IsFixedTimeStep = false;
 
-            this.Window.Title = "The Adventure of The Future: Space Terrorists";
+            this.Window.Title = "The Adventure Of The Future: Space Terrorists";
             Content.RootDirectory = "Content";
         }
 
@@ -131,7 +131,6 @@ namespace Our_First_Game
                 explosionSoundInstance.Play();
                 roundOver = new RoundOver();
                 roundOver.awardPoints(0);
-                Console.WriteLine(gameTime.TotalGameTime.TotalSeconds + ": rocket hit! BLUE");
             }
 
             if (ProjectileFireLeft.rocketBox2.Intersects(cruRect) && !cruGracePeriod)
@@ -142,7 +141,6 @@ namespace Our_First_Game
                 explosionSoundInstance.Play();
                 roundOver = new RoundOver();
                 roundOver.awardPoints(1);
-                Console.WriteLine(gameTime.TotalGameTime.TotalSeconds + ": rocket hit! RED");
             }
 
             keyNewState = Keyboard.GetState();

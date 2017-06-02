@@ -33,7 +33,7 @@ namespace Our_First_Game
             if (!endScreen)
             {
                 Game1.isGameActive = false;
-                spriteBatch.Draw(image, new Rectangle(0 ,0 , 800, 480), Color.White);
+                spriteBatch.Draw(image, new Rectangle(0, 0, 800, 480), Color.White);
             }
         }
     }
