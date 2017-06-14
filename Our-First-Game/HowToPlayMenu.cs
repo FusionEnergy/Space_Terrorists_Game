@@ -24,7 +24,7 @@ namespace Our_First_Game
             keyNewState1 = Keyboard.GetState();
             keyNewState2 = Keyboard.GetState();
 
-            if (endScreen && keyNewState1.IsKeyDown(Keys.M) && keyOldState1.IsKeyUp(Keys.M) && clickGracePeriod > clickGraceTime)
+            if (endScreen && keyNewState1.IsKeyDown(Keys.M) && keyOldState1.IsKeyUp(Keys.M) && clickGracePeriod > clickGraceTime && !Game1.splash.endScreen)
             {
                 endScreen = false;
                 clickGracePeriod = 0;
@@ -39,9 +39,12 @@ namespace Our_First_Game
             keyOldState2 = keyNewState2;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            base.Draw(spriteBatch);
+            if (!endScreen)
+            {
+                spriteBatch.Draw(image, new Rectangle(0, 0, 800, 480), Color.White);
+            }
         }
     }
 }

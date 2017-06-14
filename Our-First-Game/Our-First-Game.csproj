@@ -82,6 +82,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnimatedSprite.cs" />
+    <Compile Include="HandleMovement.cs" />
     <Compile Include="HowToPlayMenu.cs" />
     <Compile Include="DrawBackground.cs" />
     <Compile Include="Game1.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProjectileFireRight.cs" />
     <Compile Include="RoundOver.cs" />
+    <Compile Include="ScorpionAI.cs" />
     <Compile Include="SplashScreen.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
+using Space_Terrorists;
 
 namespace Our_First_Game
 {
@@ -14,24 +15,26 @@ namespace Our_First_Game
 
         private Texture2D cruiser, scorpion, rocketShot1, rocketShot2, explosion, borderPixel, blackTranslucentPixel, blueWinScreen, redWinScreen, splashScreen, howToPlayScreen, blueRed, galaxy, nebula, pink, purple;
         private Texture2D[] backgroundList;
-        public static DrawBackground drawBackground;
-        private SplashScreen splash;
         private Rectangle cruRect, scoRect;
-        private AnimatedSprite animatedExplosion;
-        private ProjectileFireRight cruFireRight;
-        private ProjectileFireLeft scoFireLeft;
-        private SpriteFont font, tuganoFont;
+        private AnimatedSprite animatedExplosionCru, animatedExplosionSco;
+        public static ProjectileFireRight cruFireRight;
+        public static ProjectileFireLeft scoFireLeft;
+        private SpriteFont font, neonAdventureFont, fightingForceFont;
+        private ScorpionAI scoAI;
         private RoundOver roundOver;
         private static KeyboardState keyOldState, keyNewState;
+        private static HandleMovement handleMovement;
         private static Song boss, map, Mars, Mercury, Venus;
         private static Song[] songList;
         private static SoundEffect rocketSound, explosionSound, winScreenSound;
+        public static DrawBackground drawBackground;
+        public static SplashScreen splash;
         public static HowToPlayMenu displayMenu;
         public static SoundEffectInstance rocketSoundInstanceLeft, rocketSoundInstanceRight, explosionSoundInstance, winScreenSoundInstance;
         public static int score1 = 0, score2 = 0;
-        public const int scoreMax = 5; //can change for debugging purposes
-        public static float cruXPos = 50, cruYPos = 380, scoXPos = 700, scoYPos = 80, reload1 = 0, reload2 = 0;
-        public static bool shot1 = false, shot2 = false, isCruAlive = true, isScoAlive = true, isGameActive = true, cruGracePeriod = true, scoGracePeriod = true;
+        public const int scoreMax = 5, reloadTimeMilliseconds = 2350, firstTimeReloadReduction = 1675; //can change values here for debugging purposes
+        public static float cruXPos = 50, cruYPos = 380, scoXPos = 700, scoYPos = 80, reload1, reload2;
+        public static bool shot1 = false, shot2 = false, isCruAlive = true, isScoAlive = true, isGameActive = true, cruGracePeriod = true, scoGracePeriod = true, scoAIEnabled;
 
         public Game1()
         {
@@ -40,6 +43,9 @@ namespace Our_First_Game
 
             this.Window.Title = "The Adventure Of The Future: Space Terrorists";
             Content.RootDirectory = "Content";
+
+            handleMovement = new HandleMovement();
+            scoAIEnabled = false;
         }
 
         protected override void Initialize()
@@ -64,7 +70,8 @@ namespace Our_First_Game
             rocketShot2 = Content.Load<Texture2D>("Pictures/rocket_shot2");
 
             explosion = Content.Load<Texture2D>("Pictures/Animations/explosion");
-            animatedExplosion = new AnimatedSprite(explosion, 4, 4);
+            animatedExplosionCru = new AnimatedSprite(explosion, 4, 4);
+            animatedExplosionSco = new AnimatedSprite(explosion, 4, 4);
 
             blueRed = Content.Load<Texture2D>("Pictures/Backgrounds/blue&red");
             galaxy = Content.Load<Texture2D>("Pictures/Backgrounds/galaxy");
@@ -100,9 +107,11 @@ namespace Our_First_Game
             winScreenSound = Content.Load<SoundEffect>("Sounds/SoundFX/win_screen_sound");
             winScreenSoundInstance = winScreenSound.CreateInstance();
             winScreenSoundInstance.Volume = 0.45f;
+            scoAI = new ScorpionAI(scorpion, cruiser, rocketShot2, rocketShot1, rocketSound);
 
             font = Content.Load<SpriteFont>("Fonts/Score");
-            tuganoFont = Content.Load<SpriteFont>("Fonts/TuganoFont");
+            neonAdventureFont = Content.Load<SpriteFont>("Fonts/NeonAdventureFont");
+            fightingForceFont = Content.Load<SpriteFont>("Fonts/FightingForceFont");
         }
 
         protected override void UnloadContent()
@@ -115,8 +124,12 @@ namespace Our_First_Game
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            reload1 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            reload2 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (isGameActive)
+            {
+                reload1 -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                reload2 -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                scoAI.HandleTimers();
+            }
 
             cruRect = new Rectangle((int)cruXPos, (int)cruYPos, cruiser.Width, cruiser.Height);
             scoRect = new Rectangle((int)scoXPos, (int)scoYPos, scorpion.Width, scorpion.Height);
@@ -130,7 +143,7 @@ namespace Our_First_Game
                 explosionSoundInstance.Pan = 0.08f;
                 explosionSoundInstance.Play();
                 roundOver = new RoundOver();
-                roundOver.awardPoints(0);
+                roundOver.AwardPoints(0);
             }
 
             if (ProjectileFireLeft.rocketBox2.Intersects(cruRect) && !cruGracePeriod)
@@ -140,70 +153,34 @@ namespace Our_First_Game
                 explosionSoundInstance.Pan = -0.08f;
                 explosionSoundInstance.Play();
                 roundOver = new RoundOver();
-                roundOver.awardPoints(1);
+                roundOver.AwardPoints(1);
             }
 
             keyNewState = Keyboard.GetState();
-
-            if (keyNewState.IsKeyDown(Keys.W) && isCruAlive && isGameActive)
-            {
-                if (cruYPos >= 70)
-                cruYPos -= 3;
-            }
-            if (keyNewState.IsKeyDown(Keys.S) && isCruAlive && isGameActive)
-            {
-                if (cruYPos <= 480 - cruiser.Height)
-                cruYPos += 3;
-            }
-            if (keyNewState.IsKeyDown(Keys.D) && isCruAlive && isGameActive)
-            {
-                if (cruXPos <= 395 - cruiser.Width)
-                cruXPos += 2.3f;
-            }
-            if (keyNewState.IsKeyDown(Keys.A) && isCruAlive && isGameActive)
-            {
-                if (cruXPos >= 0)
-                cruXPos -= 1.8f;
-            }
-            if (keyOldState.IsKeyUp(Keys.Q) && keyNewState.IsKeyDown(Keys.Q) && reload1 >= 1200 && isCruAlive && isGameActive)
+            
+            if (keyOldState.IsKeyUp(Keys.Q) && keyNewState.IsKeyDown(Keys.Q) && reload1 <= 0 && isCruAlive && isGameActive)
             {
                 shot1 = true;
                 cruFireRight = new ProjectileFireRight(rocketShot1, cruXPos + 19, cruYPos + 26);
-                reload1 = 0;
+                reload1 = reloadTimeMilliseconds;
                 scoGracePeriod = false;
                 rocketSoundInstanceRight.Play();
             }
 
-            if (keyNewState.IsKeyDown(Keys.I) && isScoAlive && isGameActive)
-            {
-                if (scoYPos >= 70)
-                scoYPos -= 3;
-            }
-            if (keyNewState.IsKeyDown(Keys.K) && isScoAlive && isGameActive)
-            {
-                if (scoYPos <= 480 - scorpion.Height)
-                scoYPos += 3;
-            }
-            if (keyNewState.IsKeyDown(Keys.J) && isScoAlive && isGameActive)
-            {
-                if (scoXPos >= 405)
-                scoXPos -= 2.3f;
-            }
-            if (keyNewState.IsKeyDown(Keys.L) && isScoAlive && isGameActive)
-            {
-                if (scoXPos <= 800 - scorpion.Width)
-                scoXPos += 1.8f;
-            }
-            if (keyOldState.IsKeyUp(Keys.U) && keyNewState.IsKeyDown(Keys.U) && reload2 >= 1200 && isScoAlive && isGameActive)
+            if (keyOldState.IsKeyUp(Keys.U) && keyNewState.IsKeyDown(Keys.U) && reload2 <= 0 && isScoAlive && isGameActive && !scoAIEnabled)
             {
                 shot2 = true;
                 scoFireLeft = new ProjectileFireLeft(rocketShot2, scoXPos - 19, scoYPos + 26);
-                reload2 = 0;
+                reload2 = reloadTimeMilliseconds;
                 cruGracePeriod = false;
                 rocketSoundInstanceLeft.Play();
             }
 
             keyOldState = keyNewState;
+
+            handleMovement.UpdateCruiserMovement(cruiser);
+            handleMovement.UpdateScorpionMovement(scorpion);
+            scoAI.HandleScorpionAI();
 
             if (MediaPlayer.State != MediaState.Playing && MediaPlayer.PlayPosition.TotalSeconds == 0.0f)
             {
@@ -218,11 +195,6 @@ namespace Our_First_Game
 
         protected override void Draw(GameTime gameTime)
         {
-            string reload = "Reloading...";
-
-            float frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
-            string frameRateOutput = Math.Round(frameRate).ToString();
-
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
@@ -249,41 +221,38 @@ namespace Our_First_Game
                 scoFireLeft.Draw(spriteBatch);
             }
 
-            if (ProjectileFireRight.rocketbox1.Intersects(scoRect) && !scoGracePeriod)
-            {
-                animatedExplosion.Draw(spriteBatch, new Vector2((scoXPos + scorpion.Width / 2) - ((explosion.Width * 2.6f) / 8), (scoYPos + scorpion.Height / 2) - ((explosion.Height * 2.6f) / 8)), 2.6f);
-            }
+            if (!isScoAlive)
+                animatedExplosionSco.Draw(spriteBatch, new Vector2((scoXPos + scorpion.Width / 2) - ((explosion.Width * 2.6f) / 8), (scoYPos + scorpion.Height / 2) - ((explosion.Height * 2.6f) / 8)), 2.6f);
 
-            if (ProjectileFireLeft.rocketBox2.Intersects(cruRect) && !cruGracePeriod)
-            {
-                animatedExplosion.Draw(spriteBatch, new Vector2((cruXPos + cruiser.Width / 2) - ((explosion.Width * 2.6f) / 8), (cruYPos + cruiser.Height / 2) - ((explosion.Height * 2.6f) / 8)), 2.6f);
-            }
+            if (!isCruAlive)
+                animatedExplosionCru.Draw(spriteBatch, new Vector2((cruXPos + cruiser.Width / 2) - ((explosion.Width * 2.6f) / 8), (cruYPos + cruiser.Height / 2) - ((explosion.Height * 2.6f) / 8)), 2.6f);
 
-            spriteBatch.DrawString(font, frameRateOutput, new Vector2(750, 0), Color.Yellow);
             spriteBatch.DrawString(font, ":", new Vector2(398.5f, 27), Color.White);
             string tempScore1 = Convert.ToString(score1), tempScore2 = Convert.ToString(score2);
             spriteBatch.DrawString(font, tempScore1, new Vector2(355, 27), Color.Blue);
             spriteBatch.DrawString(font, tempScore2, new Vector2(435, 27), Color.Red);
-            if (reload1 < 1200)
+
+            string reloadCruStr = Convert.ToString(Math.Round((reload1/1000), 1)), reloadScoStr = Convert.ToString(Math.Round((reload2/1000), 1));
+            if (reload1 >= 0)
             {
-                spriteBatch.DrawString(tuganoFont, reload, new Vector2(55, 32), Color.Blue);
+                spriteBatch.DrawString(neonAdventureFont, "Reloading...   " + reloadCruStr, new Vector2(95, 24), Color.Blue);
             }
-            if (reload2 < 1200)
+            if (reload2 >= 0)
             {
-                spriteBatch.DrawString(tuganoFont, reload, new Vector2(745 - tuganoFont.MeasureString(reload).X, 32), Color.Red);
+                spriteBatch.DrawString(neonAdventureFont, "Reloading...   " + reloadScoStr, new Vector2(705 - neonAdventureFont.MeasureString("Reloading...   0.0").X, 24), Color.Red);
             }
 
             if (score1 == scoreMax)
             {
-                roundOver.gameOver(spriteBatch, 0, blueWinScreen);
+                roundOver.GameOver(spriteBatch, 0, blueWinScreen);
             }
 
             if (score2 == scoreMax)
             {
-                roundOver.gameOver(spriteBatch, 1, redWinScreen);
+                roundOver.GameOver(spriteBatch, 1, redWinScreen);
             }
 
-            splash.Draw(spriteBatch);
+            splash.Draw(spriteBatch, fightingForceFont);
             displayMenu.Draw(spriteBatch);
 
             spriteBatch.End();

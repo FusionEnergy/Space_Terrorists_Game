@@ -10,22 +10,44 @@ namespace Our_First_Game
         public int Columns { get; set; }
         private int currentFrame;
         private int totalFrames;
+        public int CurrentFrame
+        {
+            get
+            {
+                return currentFrame;
+            }
+            private set
+            {
+                currentFrame = value;
+            }
+        }
+        public int TotalFrames
+        {
+            get
+            {
+                return totalFrames;
+            }
+            private set
+            {
+                totalFrames = value;
+            }
+        }
 
         public AnimatedSprite(Texture2D texture, int rows, int columns)
         {
             Texture = texture;
             Rows = rows;
             Columns = columns;
-            currentFrame = 0;
-            totalFrames = Rows * Columns;
+            CurrentFrame = 0;
+            TotalFrames = Rows * Columns;
         }
 
         public void Update()
         {
-            currentFrame++;
-            if (currentFrame == totalFrames)
+            CurrentFrame++;
+            if (CurrentFrame == TotalFrames)
             {
-                currentFrame = 0;
+                CurrentFrame = 0;
             }
         }
 
@@ -33,8 +55,8 @@ namespace Our_First_Game
         {
             int width = Texture.Width / Columns;
             int height = Texture.Height / Rows;
-            int row = (int)((float)currentFrame / (float)Columns);
-            int column = currentFrame % Columns;
+            int row = (int)((float)CurrentFrame / (float)Columns);
+            int column = CurrentFrame % Columns;
 
             Rectangle sourceRectangle = new Rectangle(width * column, height * row, width, height);
             Rectangle destinationRectangle = new Rectangle((int)location.X, (int)location.Y, (int)(width * scale), (int)(height * scale));

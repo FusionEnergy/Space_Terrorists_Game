@@ -3,31 +3,33 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Our_First_Game
 {
-    class ProjectileFireLeft
+    public class ProjectileFireLeft
     {
         private Texture2D rocketShot;
         public static Rectangle rocketBox2;
-        private float rocketStartX, rocketStartY, rocketSpeed;
+        public static float rocketStartX, rocketStartY, rocketPos;
+        public const float rocketSpeed = 18.75f;
 
         public ProjectileFireLeft(Texture2D projectile, float startX, float startY)
         {
             rocketShot = projectile;
             rocketStartX = startX;
             rocketStartY = startY;
+            rocketPos = 0;
         }
 
-        private bool rocketEnd()
+        private bool RocketEnd()
         {
             if (Game1.isGameActive)
             {
-                rocketSpeed += 15;
+                rocketPos += rocketSpeed;
             }
             else
             {
-                rocketSpeed += 0;
+                rocketPos += 0;
             }
 
-            if (rocketStartX - rocketSpeed <= 0 - rocketShot.Width || !Game1.isCruAlive)
+            if (rocketStartX - rocketPos <= 0 - rocketShot.Width || !Game1.isCruAlive)
             {
                 Game1.shot2 = false;
                 rocketBox2 = new Rectangle();
@@ -39,10 +41,10 @@ namespace Our_First_Game
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (rocketEnd())
+            if (RocketEnd())
             {
-                spriteBatch.Draw(rocketShot, new Vector2(rocketStartX - rocketSpeed, rocketStartY), Color.White);
-                rocketBox2 = new Rectangle((int)(rocketStartX - rocketSpeed), (int)rocketStartY, rocketShot.Width, rocketShot.Height);
+                spriteBatch.Draw(rocketShot, new Vector2(rocketStartX - rocketPos, rocketStartY), Color.White);
+                rocketBox2 = new Rectangle((int)(rocketStartX - rocketPos), (int)rocketStartY, rocketShot.Width, rocketShot.Height);
             }
         }
     }

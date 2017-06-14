@@ -73,12 +73,6 @@
 /processorParam:TextureFormat=Color
 /build:Pictures/rocket_shot2.png
 
-#begin Fonts/TuganoFont.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:TextureFormat=Compressed
-/build:Fonts/TuganoFont.spritefont
-
 #begin Pictures/Animations/explosion.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -229,6 +223,12 @@
 /processorParam:TextureFormat=Color
 /build:Pictures/Screens/HowToPlayScreen.png
 
+#begin Fonts/NeonAdventureFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Fonts/NeonAdventureFont.spritefont
+
 #begin Pictures/Screens/SplashScreen.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -240,4 +240,10 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Pictures/Screens/SplashScreen.png
+
+#begin Fonts/FightingForceFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Fonts/FightingForceFont.spritefont
 
